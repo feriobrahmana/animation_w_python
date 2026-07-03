@@ -55,7 +55,7 @@ class FivePercentUpset(Scene):
         prob_a.next_to(team_a, DOWN, buff=0.26)
         prob_b.next_to(team_b, DOWN, buff=0.26)
 
-        self.play(FadeIn(title, shift=DOWN))
+        self.write_phrase(title, run_time=1.15, lag_ratio=0.18)
         self.play(FadeIn(subtitle, shift=DOWN))
         self.play(FadeIn(team_a, scale=0.9), FadeIn(team_b, scale=0.9), FadeIn(vs))
         self.play(FadeIn(prob_a, shift=UP), FadeIn(prob_b, shift=UP))
@@ -85,8 +85,8 @@ class FivePercentUpset(Scene):
         meaning = self.make_text("it is a low-probability outcome", 23, self.muted_color)
         meaning.next_to(not_loss, DOWN, buff=0.42)
 
-        self.play(FadeIn(top, shift=DOWN))
-        self.play(FadeIn(not_loss, scale=0.95))
+        self.write_phrase(top, run_time=1.0, lag_ratio=0.16)
+        self.write_phrase(not_loss, run_time=1.1, lag_ratio=0.14)
         self.play(FadeIn(meaning, shift=UP))
         self.wait(1.0)
         self.play(FadeOut(top), FadeOut(not_loss), FadeOut(meaning), run_time=0.5)
@@ -119,9 +119,9 @@ class FivePercentUpset(Scene):
         ], direction=DOWN, buff=0.08)
         caption.move_to(DOWN * 2.66)
 
-        self.play(FadeIn(title, shift=DOWN))
+        self.write_phrase(title, run_time=1.05, lag_ratio=0.14)
         self.play(LaggedStartMap(FadeIn, universes, lag_ratio=0.10, run_time=1.7))
-        self.play(FadeIn(caption, shift=UP))
+        self.write_phrase(caption, run_time=0.9, lag_ratio=0.18)
         self.wait(1.0)
         self.play(FadeOut(title), FadeOut(universes), FadeOut(caption), run_time=0.55)
 
@@ -149,7 +149,7 @@ class FivePercentUpset(Scene):
         self.fields.set_width(3.58)
         self.fields.next_to(self.subheader, DOWN, buff=0.18)
 
-        self.play(FadeIn(self.header, shift=DOWN))
+        self.write_phrase(self.header, run_time=1.0, lag_ratio=0.12)
         self.play(FadeIn(self.subheader, shift=DOWN))
         self.play(LaggedStartMap(FadeIn, self.fields, lag_ratio=0.045, run_time=2.5))
         self.wait(0.45)
@@ -205,7 +205,9 @@ class FivePercentUpset(Scene):
 
         final_subheader = self.make_text("5% is rare, not impossible", 21, self.gold_color)
         final_subheader.next_to(self.header, DOWN, buff=0.10)
-        self.play(Transform(self.subheader, final_subheader))
+        self.play(FadeOut(self.subheader, run_time=0.25))
+        self.play(Write(final_subheader), run_time=1.0)
+        self.subheader = final_subheader
         self.wait(1.4)
 
     def make_text(self, text, font_size, color):
@@ -217,6 +219,12 @@ class FivePercentUpset(Scene):
         phrase = VGroup(*[self.make_text(text, size, color) for text, color, size in parts])
         phrase.arrange(direction, buff=buff)
         return phrase
+
+    def write_phrase(self, phrase, run_time=1.0, lag_ratio=0.12):
+        self.play(
+            LaggedStart(*[Write(part) for part in phrase], lag_ratio=lag_ratio),
+            run_time=run_time,
+        )
 
     def make_probability_block(self, label, value, color):
         label_mob = self.make_text(label, 17, self.muted_color)
